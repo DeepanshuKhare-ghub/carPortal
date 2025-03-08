@@ -41,6 +41,12 @@ public class UserService {
             return ResponseEntity.badRequest().body("Username already exists");
         }
 
+        Optional<User> byMobile = userRepository.findByMobile(user.getMobile());
+
+        if (byMobile.isPresent()) {
+            return ResponseEntity.badRequest().body("Mobile Number already Used");
+        }
+
 //        String encodedPassword = passwordEncoder.encode(user.getPassword());
         String hashpw = BCrypt.hashpw(user.getPassword(), BCrypt.gensalt(10));
         user.setPassword(hashpw);
@@ -51,13 +57,10 @@ public class UserService {
     }
 
     public String login(LoginDto loginDto) {
-        Optional<User> byUsername = userRepository.findByUsername(loginDto.getUsername());
-        if (byUsername.isPresent()) {
-            User user = byUsername.get();
+        User user = userRepository.findByUsername(loginDto.getUsername()).orElseThrow(()-> new RuntimeException("User not Registered"));
             if (BCrypt.checkpw(loginDto.getPassword(), user.getPassword())) {
                 return jwtService.generateToken(user.getUsername());
             }
-        }
         return null;
     }
 }
