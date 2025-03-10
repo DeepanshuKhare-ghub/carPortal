@@ -27,17 +27,17 @@ public class Auth {
 
     @PostMapping(ApiEndpoints.USER_SIGNUP)
     public ResponseEntity<Object> createUser(@RequestBody UserDto userDto){
-        return userService.create(userDto,"ROLE_USER");
+        return userService.create(userDto,"USER");
     }
 
     @PostMapping(ApiEndpoints.CONTENT_MANAGER_SIGNUP)
     public ResponseEntity<Object> createContentManager(@RequestBody UserDto userDto){
-        return userService.create(userDto,"ROLE_CONTENTMANAGER");
+        return userService.create(userDto,"CONTENTMANAGER");
     }
 
-    @PostMapping(ApiEndpoints.BLOG_MANAGER_SIGNUP)
+    @PostMapping(ApiEndpoints.ADMIN_SIGNUP)
     public ResponseEntity<Object> blogManager(@RequestBody UserDto userDto){
-        return userService.create(userDto,"ROLE_BLOGMANAGER");
+        return userService.create(userDto,"ADMIN");
     }
 
     @PostMapping(ApiEndpoints.USER_SIGNIN)

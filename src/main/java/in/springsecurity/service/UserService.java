@@ -31,7 +31,7 @@ public class UserService {
     public ResponseEntity<Object> create(UserDto userDto, String role) {
         User user = mapping.user(userDto);
 
-        Optional<User> byEmailId = userRepository.findByEmailId(user.getEmailId());
+        Optional<User> byEmailId = userRepository.findByEmail(user.getEmail());
         if (byEmailId.isPresent()) {
             return ResponseEntity.badRequest().body("Email id already exists");
         }
@@ -59,7 +59,7 @@ public class UserService {
     public String login(LoginDto loginDto) {
         User user = userRepository.findByUsername(loginDto.getUsername()).orElseThrow(()-> new RuntimeException("User not Registered"));
             if (BCrypt.checkpw(loginDto.getPassword(), user.getPassword())) {
-                return jwtService.generateToken(user.getUsername());
+                return jwtService.generateToken(user.getUsername(),user.getRole());
             }
         return null;
     }

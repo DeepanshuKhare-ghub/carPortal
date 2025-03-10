@@ -11,7 +11,7 @@ public final class ApiEndpoints {
 
         public static final String USER_SIGNUP = "/user-signup";
         public static final String CONTENT_MANAGER_SIGNUP = "/content-manager-signup";
-        public static final String BLOG_MANAGER_SIGNUP =  "/blog-manager-signup";
+        public static final String ADMIN_SIGNUP =  "/admin-signup";
         public static final String USER_SIGNIN =  "/userSignIn";
         public static final String OTP_LOGIN =  "/login-otp";
         public static final String OTP_VALIDATE ="/validate-otp";

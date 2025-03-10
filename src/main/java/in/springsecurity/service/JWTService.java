@@ -33,23 +33,51 @@ public class JWTService {
     //Generating token
 
     //formula - Computer Engineer is Always Unemployed
-    public String generateToken(String username) {
-         return JWT.create()
-                .withClaim("username",username)
-                      .withExpiresAt(new Date(System.currentTimeMillis()+expiry))
-                            .withIssuer(issuer)
-                                 .sign(algorithm);
+//    public String generateToken(String username) {
+//         return JWT.create()
+//                .withClaim("username",username)
+//                      .withExpiresAt(new Date(System.currentTimeMillis()+expiry))
+//                            .withIssuer(issuer)
+//                                 .sign(algorithm);
+//    }
+//
+//
+//    // method for getUsername from jwt token for validation
+//
+//    //formula - Junior sachin with bodyguard vikram
+//    public String getUsername(String token){
+//        DecodedJWT verify = JWT.require(algorithm)
+//                .withIssuer(issuer)
+//                .build()
+//                .verify(token);
+//       return  verify.getClaim("username").asString();
+//    }
+
+
+    public String generateToken(String username, String role) {
+        return JWT.create()
+                .withClaim("username", username)
+                .withClaim("role", role)
+                .withExpiresAt(new Date(System.currentTimeMillis() + expiry))
+                .withIssuer(issuer)
+                .sign(algorithm);
     }
 
-
-    // method for getUsername from jwt token for validation
-
-    //formula - Junior sachin with bodyguard vikram
-    public String getUsername(String token){
+    // Extract username from JWT token
+    public String getUsername(String token) {
         DecodedJWT verify = JWT.require(algorithm)
                 .withIssuer(issuer)
                 .build()
                 .verify(token);
-       return  verify.getClaim("username").asString();
+        return verify.getClaim("username").asString();
+    }
+
+    // Extract user role from JWT token
+    public String getRole(String token) {
+        DecodedJWT verify = JWT.require(algorithm)
+                .withIssuer(issuer)
+                .build()
+                .verify(token);
+        return verify.getClaim("role").asString();
     }
 }

@@ -7,7 +7,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
+
+import static java.util.concurrent.TimeUnit.SECONDS;
 
 @Service
 public class OTPService {
@@ -22,8 +25,8 @@ public class OTPService {
 
 
 
-    private final Map<String, OTPDetails>  otpStorage = new HashMap<>();
-    private static final int OTP_EXPIRY_TIME =5;
+    private final ConcurrentHashMap<String, OTPDetails> otpStorage = new ConcurrentHashMap<>();
+     private static final long OTP_EXPIRY_TIME  = TimeUnit.SECONDS.toMillis(300);
 
 
     //Method to generate OTP
@@ -31,9 +34,7 @@ public class OTPService {
 
 
         // checking whether user exists in database
-        Optional<User> opUser = userRepository.findByMobile(mobileNumber);
-
-        if(opUser.isPresent()) {
+        User user = userRepository.findByMobile(mobileNumber).orElseThrow(() -> new RuntimeException("Unregistered mob+ile Number"));
 
             //generate a 6-digit random otp
             String otp = String.format("%06d", new Random().nextInt(999999));
@@ -44,8 +45,7 @@ public class OTPService {
             OTPDetails otpGet = otpStorage.put(mobileNumber, otpDetails);
             return otp + "  :  " + mobileNumber;
         }
-        return "user not found";
-    }
+
 
 
     public ResponseEntity<?> validateOtp(String mobile, String otp) {
@@ -68,14 +68,13 @@ public class OTPService {
             otpStorage.remove(mobile);
             return  ResponseEntity.badRequest().body("Otp Expired");
         }
+            if(otpDetails.getOtp().equals(otp)) {
+                User user = userRepository.findByMobile(mobile).orElseThrow(() -> new RuntimeException("Invalid Mobile Number"));
+                String token = jwtService.generateToken(user.getUsername(),user.getRole());
+                return new ResponseEntity<>(token, HttpStatus.CREATED);
 
-        else {
-            otpDetails.getOtp().equals(otp);
-            Optional<User> byMobile = userRepository.findByMobile(mobile);
-            User user = byMobile.get();
-            String token = jwtService.generateToken(user.getUsername());
-            return new ResponseEntity<>(token, HttpStatus.CREATED);
         }
+            return ResponseEntity.badRequest().body("Technical error plz re-enter otp");
          }
     }
 

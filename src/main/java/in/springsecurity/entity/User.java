@@ -13,7 +13,7 @@ public class User {
     private String name;
 
     @Column(name="email_id",nullable = false, length = 100)
-    private String emailId;
+    private String email;
 
     @Column(name= "role", nullable = false ,length = 25)
     private String role;
@@ -27,6 +27,12 @@ public class User {
     @Column(name="mobile" ,unique = true, length = 10)
     private String mobile;
 
+
+    @Column(name = "provider")
+    private String provider;  // Stores "GOOGLE" if user logs in via Google
+
+    @Column(name = "provider_id", unique = true)
+    private String providerId; // Stores Google "sub" ID
 
 
     public long getId() {
@@ -45,12 +51,12 @@ public class User {
         this.name = name;
     }
 
-    public String getEmailId() {
-        return emailId;
+    public String getEmail() {
+        return email;
     }
 
-    public void setEmailId(String emailId) {
-        this.emailId = emailId;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getUsername() {
@@ -85,5 +91,21 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getProvider() {
+        return provider;
+    }
+
+    public void setProvider(String provider) {
+        this.provider = provider;
+    }
+
+    public String getProviderId() {
+        return providerId;
+    }
+
+    public void setProviderId(String providerId) {
+        this.providerId = providerId;
     }
 }

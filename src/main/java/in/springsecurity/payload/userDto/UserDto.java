@@ -4,7 +4,7 @@ public class UserDto {
 
 
     private String name;
-    private String emailId;
+    private String email;
     private String username;
     private String password;
     private String mobile;
@@ -25,12 +25,12 @@ public class UserDto {
         this.name = name;
     }
 
-    public String getEmailId() {
-        return emailId;
+    public String getEmail() {
+        return email;
     }
 
-    public void setEmailId(String emailId) {
-        this.emailId = emailId;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getUsername() {
