@@ -1,6 +1,8 @@
 package in.springsecurity.service;
 
 import in.springsecurity.entity.cars.*;
+import in.springsecurity.exceptions.DuplicateResourceException;
+import in.springsecurity.exceptions.ResourceNotFoundException;
 import in.springsecurity.payload.carDto.*;
 import in.springsecurity.repository.cars.*;
 import org.springframework.http.HttpStatus;
@@ -40,7 +42,7 @@ public class CarService {
     public String addBrand(BrandDto brandDto) {
         Optional<CarBrand> byBrandName = brandRepository.findByBrandName(brandDto.getName());
         if(byBrandName.isPresent()){
-            throw new RuntimeException("CarBrand name already exists");
+            throw new DuplicateResourceException("CarBrand name already exists");
         }
         {
             CarBrand carBrand = new CarBrand();
@@ -55,7 +57,7 @@ public class CarService {
 
         Optional<CarFuelType> byFuelType = fuelTypeRepository.findByFuelType(fuelDto.getType());
         if(byFuelType.isPresent()){
-            throw new RuntimeException("Fuel type already exists");
+            throw new DuplicateResourceException("Fuel type already exists");
         }
         {
             CarFuelType carFuelType = new CarFuelType();
@@ -70,7 +72,7 @@ public class CarService {
 
         Optional<CarModel> byModel = modelRepository.findByModel(modelDto.getModel());
         if(byModel.isPresent()){
-            throw new RuntimeException("model already exists");
+            throw new DuplicateResourceException("model already exists");
         }
         {
             CarModel carModel = new CarModel();
@@ -87,7 +89,7 @@ public class CarService {
                                                           .findByTransmissionType(transmissionDto.getType());
 
         if(byTransmissionType.isPresent()){
-            throw new RuntimeException("transmission type already exists");
+            throw new DuplicateResourceException("transmission type already exists");
         }
         {
             CarTransmission carTransmission = new CarTransmission();
@@ -104,7 +106,7 @@ public class CarService {
                 .findByStatusName(statusDto.getStatus());
 
         if(byStatusName.isPresent()){
-            throw new RuntimeException("status already exists");
+            throw new DuplicateResourceException("status already exists");
         }
         {
             CarStatus status = new CarStatus();
@@ -119,7 +121,7 @@ public class CarService {
 
         Optional<CarYear> byYear = yearRepository.findByYear(yearDto.getYear());
         if(byYear.isPresent()){
-            throw new RuntimeException(" year already exists");
+            throw new DuplicateResourceException(" year already exists");
         }
         {
             CarYear carYear = new CarYear();
@@ -133,12 +135,12 @@ public class CarService {
     public ResponseEntity<Car> addCar(Long brandId, Long modelId, Long yearId, Long fuelId, Long transmissionId, Long statusId) {
         //checking whether the data is there in parent
 
-        CarBrand carBrand = brandRepository.findById(brandId).orElseThrow(() -> new RuntimeException("CarBrand not found"));
-        CarModel carModel = modelRepository.findById(modelId).orElseThrow(() -> new RuntimeException("CarModel not found"));
-        CarYear carYear = yearRepository.findById(yearId).orElseThrow(() -> new RuntimeException("CarYear not found"));
-        CarFuelType carFuelType = fuelTypeRepository.findById(fuelId).orElseThrow(() -> new RuntimeException("Fuel type not found"));
-        CarTransmission carTransmission = transmission_TypeRepository.findById(transmissionId).orElseThrow(() -> new RuntimeException("carTransmission type not found"));
-        CarStatus carStatus = carStatusRepository.findById(statusId).orElseThrow(()-> new RuntimeException("status not found"));
+        CarBrand carBrand = brandRepository.findById(brandId).orElseThrow(() -> new ResourceNotFoundException("CarBrand not found"));
+        CarModel carModel = modelRepository.findById(modelId).orElseThrow(() -> new ResourceNotFoundException("CarModel not found"));
+        CarYear carYear = yearRepository.findById(yearId).orElseThrow(() -> new ResourceNotFoundException("CarYear not found"));
+        CarFuelType carFuelType = fuelTypeRepository.findById(fuelId).orElseThrow(() -> new ResourceNotFoundException("Fuel type not found"));
+        CarTransmission carTransmission = transmission_TypeRepository.findById(transmissionId).orElseThrow(() -> new ResourceNotFoundException("carTransmission type not found"));
+        CarStatus carStatus = carStatusRepository.findById(statusId).orElseThrow(()-> new ResourceNotFoundException("status not found"));
 
 /*
 AVAILABLE, SOLD , UPCOMING
@@ -185,10 +187,10 @@ AVAILABLE, SOLD , UPCOMING
     // updating the car status
     public String updateCarStatus(Long carId, Long statusId) {
         Car car = carRepository.findById(carId)
-                .orElseThrow(() -> new RuntimeException("Car not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Car not found"));
 
         CarStatus carStatus = carStatusRepository.findById(statusId)
-                .orElseThrow(() -> new RuntimeException("Status not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Status not found"));
 
         if (car.getStatus().equals(carStatus)) {
             return "Car is already in status: " + carStatus.getStatus();

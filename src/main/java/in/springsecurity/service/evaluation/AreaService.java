@@ -2,6 +2,8 @@ package in.springsecurity.service.evaluation;
 
 import in.springsecurity.entity.evaluation.Agent;
 import in.springsecurity.entity.evaluation.Area;
+import in.springsecurity.exceptions.DuplicateResourceException;
+import in.springsecurity.exceptions.ResourceNotFoundException;
 import in.springsecurity.payload.evaluationDto.AreaDto;
 import in.springsecurity.repository.evaluation.AgentRepository;
 import in.springsecurity.repository.evaluation.AreaRepository;
@@ -26,14 +28,14 @@ public class AreaService {
         // Fetch the existing area by pinCode (should return only ONE)
         Optional<Area> optionalArea = areaRepository.findByPinCode(areaDto.getPinCode());
         if (optionalArea.isPresent()) {
-            throw new RuntimeException("Area already exists with pinCode : " + areaDto.getPinCode());
+            throw new DuplicateResourceException("Area already exists with pinCode : " + areaDto.getPinCode());
         }
 
 
         // Fetch the agent
         Optional<Agent> agentOptional = agentRepository.findById(areaDto.getAgentId());
         if (agentOptional.isEmpty()) {
-            throw new RuntimeException("Agent with ID " + areaDto.getAgentId() + " not found");
+            throw new ResourceNotFoundException("Agent with ID " + areaDto.getAgentId() + " not found");
         }
 
         Agent agent = agentOptional.get();

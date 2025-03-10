@@ -1,6 +1,7 @@
 package in.springsecurity.service;
 
 import in.springsecurity.entity.User;
+import in.springsecurity.exceptions.ResourceNotFoundException;
 import in.springsecurity.model.Mapping;
 import in.springsecurity.payload.userDto.LoginDto;
 import in.springsecurity.payload.userDto.UserDto;
@@ -57,7 +58,7 @@ public class UserService {
     }
 
     public String login(LoginDto loginDto) {
-        User user = userRepository.findByUsername(loginDto.getUsername()).orElseThrow(()-> new RuntimeException("User not Registered"));
+        User user = userRepository.findByUsername(loginDto.getUsername()).orElseThrow(()-> new ResourceNotFoundException("User not Registered"));
             if (BCrypt.checkpw(loginDto.getPassword(), user.getPassword())) {
                 return jwtService.generateToken(user.getUsername(),user.getRole());
             }

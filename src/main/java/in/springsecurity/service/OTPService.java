@@ -1,6 +1,7 @@
 package in.springsecurity.service;
 
 import in.springsecurity.entity.User;
+import in.springsecurity.exceptions.ResourceNotFoundException;
 import in.springsecurity.payload.OTPDetails;
 import in.springsecurity.repository.UserRepository;
 import org.springframework.http.HttpStatus;
@@ -34,7 +35,7 @@ public class OTPService {
 
 
         // checking whether user exists in database
-        User user = userRepository.findByMobile(mobileNumber).orElseThrow(() -> new RuntimeException("Unregistered mob+ile Number"));
+        User user = userRepository.findByMobile(mobileNumber).orElseThrow(() ->new ResourceNotFoundException("Unregistered mob+ile Number"));
 
             //generate a 6-digit random otp
             String otp = String.format("%06d", new Random().nextInt(999999));
@@ -69,7 +70,7 @@ public class OTPService {
             return  ResponseEntity.badRequest().body("Otp Expired");
         }
             if(otpDetails.getOtp().equals(otp)) {
-                User user = userRepository.findByMobile(mobile).orElseThrow(() -> new RuntimeException("Invalid Mobile Number"));
+                User user = userRepository.findByMobile(mobile).orElseThrow(() -> new ResourceNotFoundException("Invalid Mobile Number"));
                 String token = jwtService.generateToken(user.getUsername(),user.getRole());
                 return new ResponseEntity<>(token, HttpStatus.CREATED);
 
